@@ -12,7 +12,9 @@ on:
         description: Environment for image push
         required: false
         type: string
-        default: ${{ github.event_name == 'pull_request' && 'dev' || 'prod' }}
+        # XXX: Force into dev, until we are ready to fully adopt.
+        default: dev
+        #default: ${{ github.event_name == 'pull_request' && 'dev' || 'prod' }}
       image-name:
         description: The name of the image to build.
         required: true
