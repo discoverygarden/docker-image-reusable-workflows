@@ -99,7 +99,7 @@ jobs:
           cat - >> "$GITHUB_OUTPUT" <<EOF
           flavor<<EOFLAV
           latest=true
-          suffix=.{{date 'YYYYMMDDHHmmss'}},onlatest=false
+          suffix=-{{date 'YYYYMMDDHHmmss'}},onlatest=false
           EOFLAV
           EOF
           else
