@@ -27,6 +27,11 @@ on:
         description: Image flavor, as per `docker/metadata-action`'s `flavor` input.
         required: false
         type: string
+      aws-region:
+        description: AWS ECR region
+        required: false
+        type: string
+        default: ${{ vars.ECR_AWS_REGION }}
     outputs:
       tags:
         description: The "{image}:{tag}" image tags.
@@ -123,7 +128,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ inputs.aws-region }}
           mask-aws-account-id: false
       - name: Login to Amazon ECR
         id: login-ecr
@@ -134,7 +139,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ vars.AWS_PROD_PULL_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ inputs.aws-region }}
           mask-aws-account-id: false
       - name: Login to Amazon prod ECR for pull
         if: ${{ inputs.env == 'dev' }}
