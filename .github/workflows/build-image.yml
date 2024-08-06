@@ -139,7 +139,7 @@ jobs:
           mask-aws-account-id: false
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Configure AWS prod credentials for pull
         if: ${{ inputs.env == 'dev' }}
@@ -151,7 +151,7 @@ jobs:
       - name: Login to Amazon prod ECR for pull
         if: ${{ inputs.env == 'dev' }}
         id: login-prod-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       # --- Build and push
       - name: Build and push
