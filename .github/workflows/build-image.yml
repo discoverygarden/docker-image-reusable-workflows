@@ -132,7 +132,7 @@ jobs:
 
       # --- Configure creds
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ inputs.aws-region }}
@@ -143,7 +143,7 @@ jobs:
 
       - name: Configure AWS prod credentials for pull
         if: ${{ inputs.env == 'dev' }}
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_PROD_PULL_ROLE_ARN }}
           aws-region: ${{ inputs.aws-region }}
