@@ -155,7 +155,7 @@ jobs:
 
       # --- Build and push
       - name: Build and push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         id: image-build
         with:
           push: true
