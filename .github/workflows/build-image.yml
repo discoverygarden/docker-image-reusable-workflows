@@ -34,6 +34,11 @@ on:
         description: Specific tag to (re)build.
         required: false
         type: string
+      runs-on:
+        description: The platform on which to run this workflow.
+        type: string
+        required: false
+        default: ubuntu-latest
     outputs:
       tags:
         description: The "{image}:{tag}" image tags.
@@ -50,10 +55,7 @@ on:
 
 jobs:
   build-push:
-    # XXX: ubuntu-latest moving to 24.04 might've caused some builds to start segfaulting, in particular:
-    # in cantaloupe-image, with the arm64 build of TurboJPEG.
-    runs-on: ubuntu-22.04
-    #runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     environment: ${{ inputs.env }}
     outputs:
       image-info: ${{ toJson(steps.image-build.outputs) }}
