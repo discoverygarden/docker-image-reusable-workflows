@@ -50,7 +50,10 @@ on:
 
 jobs:
   build-push:
-    runs-on: ubuntu-latest
+    # XXX: ubuntu-latest moving to 24.04 might've caused some builds to start segfaulting, in particular:
+    # in cantaloupe-image, with the arm64 build of TurboJPEG.
+    runs-on: ubuntu-22.04
+    #runs-on: ubuntu-latest
     environment: ${{ inputs.env }}
     outputs:
       image-info: ${{ toJson(steps.image-build.outputs) }}
