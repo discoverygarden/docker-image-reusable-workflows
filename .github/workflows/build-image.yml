@@ -4,6 +4,7 @@ name: Build and Push Image
 permissions:
   id-token: write
   contents: read
+  packages: write
 on:
   # For automated/reusable workflow calls.
   workflow_call:
