@@ -177,25 +177,3 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           build-args: ${{ inputs.build-args }}
 
-      - name: Extract image names
-        id: image-names
-        run: |
-          METADATA='${{ steps.image-build.outputs.metadata }}'
-          TOGETHER=$(echo "$METADATA" | jq -c '.["image.name"]')
-          cat <<EOF >> $GITHUB_OUTPUT
-          together=$TOGETHER
-          split=$(echo "$TOGETHER" | jq -c '. | split(",")')
-          EOF
-
-      - name: Create summary
-        run: |
-          cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## Images Pushed
-          | Image  | Tags |
-          | ------------- | ------------- |
-          | $IMAGE_REPO | $(awk -F ":" '{print $NF}' <<< "$TAGS" | sed -z 's/\n/, /g;s/, *$/\n/' ) |
-          EOF
-        env:
-          IMAGE_REPO: ${{ vars.DOCKER_REGISTRY_URL }}/${{ inputs.image-name }}
-          TAGS: ${{ steps.meta.outputs.tags }}
-
