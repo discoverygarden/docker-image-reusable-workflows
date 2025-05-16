@@ -124,7 +124,7 @@ jobs:
         with:
           images: |
             ${{ vars.DOCKER_REGISTRY_URL }}/${{ inputs.image-name }}
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.env == 'dev' && 'dev-' }}${{ inputs.image-name }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.env == 'dev' && 'dev-' || '' }}${{ inputs.image-name }}
           tags: ${{ steps.tag-structure.outputs.tags }}
           flavor: |
             ${{ inputs.image-flavor }}
