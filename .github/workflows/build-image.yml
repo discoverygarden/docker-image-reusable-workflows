@@ -4,6 +4,7 @@ name: Build and Push Image
 permissions:
   id-token: write
   contents: read
+  packages: write
 on:
   # For automated/reusable workflow calls.
   workflow_call:
@@ -121,7 +122,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ vars.DOCKER_REGISTRY_URL }}/${{ inputs.image-name }}
+          images: |
+            ${{ vars.DOCKER_REGISTRY_URL }}/${{ inputs.image-name }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.env == 'dev' && 'dev-' || '' }}${{ inputs.image-name }}
           tags: ${{ steps.tag-structure.outputs.tags }}
           flavor: |
             ${{ inputs.image-flavor }}
@@ -155,6 +158,12 @@ jobs:
         if: ${{ inputs.env == 'dev' }}
         id: login-prod-ecr
         uses: aws-actions/amazon-ecr-login@v2
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # --- Build and push
       - name: Build and push
@@ -165,26 +174,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           build-args: ${{ inputs.build-args }}
-
-      - name: Extract image names
-        id: image-names
-        run: |
-          METADATA='${{ steps.image-build.outputs.metadata }}'
-          TOGETHER=$(echo "$METADATA" | jq -c '.["image.name"]')
-          cat <<EOF >> $GITHUB_OUTPUT
-          together=$TOGETHER
-          split=$(echo "$TOGETHER" | jq -c '. | split(",")')
-          EOF
-
-      - name: Create summary
-        run: |
-          cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## Images Pushed
-          | Image  | Tags |
-          | ------------- | ------------- |
-          | $IMAGE_REPO | $(awk -F ":" '{print $NF}' <<< "$TAGS" | sed -z 's/\n/, /g;s/, *$/\n/' ) |
-          EOF
-        env:
-          IMAGE_REPO: ${{ vars.DOCKER_REGISTRY_URL }}/${{ inputs.image-name }}
-          TAGS: ${{ steps.meta.outputs.tags }}
 
