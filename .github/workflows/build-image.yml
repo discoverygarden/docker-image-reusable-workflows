@@ -121,7 +121,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ vars.DOCKER_REGISTRY_URL }}/${{ inputs.image-name }}
+          images: |
+            ${{ vars.DOCKER_REGISTRY_URL }}/${{ inputs.image-name }}
+            ${{ inputs.env == 'dev' && format('ghcr.io/{0}/{1}', github.repository_owner, inputs.image-name }}
           tags: ${{ steps.tag-structure.outputs.tags }}
           flavor: |
             ${{ inputs.image-flavor }}
@@ -156,6 +158,8 @@ jobs:
         id: login-prod-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Log in to the GitHub Container registry
+        # TODO: set to prod before merging
+        if: ${{ inputs.env == 'dev' }}
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ghcr.io
