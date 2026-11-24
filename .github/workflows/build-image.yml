@@ -179,6 +179,10 @@ jobs:
           platforms: linux/amd64
           tags: smoke-test:local
           build-args: ${{ inputs.build-args }}
+          # The pushed image is built without a cache, so scheduled and manual
+          # runs must not test an image assembled from stale cached layers
+          # (e.g. old apt-get output). PR builds keep the cache for speed.
+          no-cache: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
           cache-from: type=gha,scope=smoke
           cache-to: type=gha,scope=smoke,mode=max
       - name: Smoke test
